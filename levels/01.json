@@ -1,0 +1,9 @@
+{
+  "walls": 3,
+  "grid": [
+    ["WATER", "WATER", "WATER", "WATER"],
+    ["GRASS", "HORSE", "GRASS", "WATER"],
+    ["WATER", "GRASS", "GRASS", "WATER"],
+    ["WATER", "WATER", "WATER", "WATER"]
+  ]
+}
