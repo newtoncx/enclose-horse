@@ -6,7 +6,6 @@ from typing import List, Optional, Tuple
 class TextColor(Enum):
     GREEN = auto()
     WHITE = auto()
-    GREY = auto()
     BLUE = auto()
  
  
@@ -25,7 +24,7 @@ def render_grid(grid: List[List[Tile]], highlighted: List[Tuple[int, int]], high
     tile_colors = {
         TileType.HORSE: TextColor.WHITE,
         TileType.GRASS: TextColor.GREEN,
-        TileType.WALL: TextColor.GREY,
+        TileType.WALL: TextColor.WHITE,
         TileType.WATER: TextColor.BLUE
     }
     highlighted_set = set(highlighted or [])
@@ -47,7 +46,6 @@ def colorize(ch: str, text_color: TextColor, background_color: Optional[Backgrou
     text_color_codes = {
         TextColor.GREEN: "\033[32m",
         TextColor.WHITE: "\033[37m",
-        TextColor.GREY: "\033[90m",
         TextColor.BLUE: "\033[34m"
     }
     background_color_codes = {

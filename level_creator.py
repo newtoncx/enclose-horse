@@ -3,7 +3,6 @@ from level_io import Level, save_level
 from render import BackgroundColor, render_grid
 from tile import Tile, TileType
 
-
 PLACEABLE_TYPES = {
     "water": TileType.WATER,
     "horse": TileType.HORSE,
@@ -16,16 +15,33 @@ class LevelCreator:
         self.grid = None
         self.walls = None
 
+    def _prompt_int(self, prompt: str, min_val: int = 1) -> int:
+        while True:
+            try:
+                val = int(input(prompt))
+                if val < min_val:
+                    print(f"Must be at least {min_val}.")
+                else:
+                    return val
+            except ValueError:
+                print("Please enter a whole number.")
+
     def setup(self):
-        rows = int(input("Grid rows: "))
-        cols = int(input("Grid cols: "))
-        self.walls = int(input("Number of walls: "))
+        rows = self._prompt_int("Grid rows: ")
+        cols = self._prompt_int("Grid cols: ")
+        self.walls = self._prompt_int("Number of walls: ", min_val=0)
         self.grid = [
             [Tile(TileType.GRASS) for _ in range(cols)]
             for _ in range(rows)
         ]
 
+    def _in_bounds(self, row: int, col: int) -> bool:
+        return 0 <= row < len(self.grid) and 0 <= col < len(self.grid[0])
+
     def place(self, row: int, col: int, tile_type: TileType) -> bool:
+        if not self._in_bounds(row, col):
+            print(f"Out of bounds. Grid is {len(self.grid)}x{len(self.grid[0])}.")
+            return False
         self.grid[row][col] = Tile(tile_type)
         return True
 
@@ -49,11 +65,20 @@ class LevelCreator:
                 self.running = False
             elif cmd.startswith("place"):
                 parts = cmd.split()
-                row, col = int(parts[1]), ord(parts[2]) - ord('a')
-                type_str = parts[3]
-                tile_type = PLACEABLE_TYPES.get(type_str)
+                if len(parts) != 4:
+                    print("Usage: place <row> <col> <type>")
+                    continue
+                try:
+                    row = int(parts[1])
+                    col = ord(parts[2]) - ord('a')
+                    if len(parts[2]) != 1 or not parts[2].isalpha():
+                        raise ValueError
+                except ValueError:
+                    print("Row must be a number, col must be a single letter.")
+                    continue
+                tile_type = PLACEABLE_TYPES.get(parts[3])
                 if tile_type is None:
-                    print(f"Unknown type '{type_str}'. Options: {', '.join(PLACEABLE_TYPES)}")
+                    print(f"Unknown type '{parts[3]}'. Options: {', '.join(PLACEABLE_TYPES)}")
                 else:
                     done = self.place(row, col, tile_type)
             else:
@@ -61,13 +86,20 @@ class LevelCreator:
         print()
 
     def save(self):
-        path = input("Save level to file: ").strip()
-        save_level(Level(self.grid, self.walls), path)
-        print(f"Level saved to {path}")
+        while True:
+            path = input("Save level to file: ").strip()
+            if not path:
+                print("Path cannot be empty.")
+                continue
+            try:
+                save_level(Level(self.grid, self.walls), path)
+                print(f"Level saved to {path}")
+                break
+            except OSError as e:
+                print(f"Could not save: {e}")
 
- 
+
 if __name__ == "__main__":
     level_creator = LevelCreator()
     level_creator.run()
     raise SystemExit(0)
- 

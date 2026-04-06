@@ -7,31 +7,34 @@ from tile import Tile, TileType
 class Game:
     def __init__(self, level: Level):
         self.running = False
-        self.grid = level.grid
+        self.grid = [row[:] for row in level.grid]
         self.walls_remaining = level.walls
 
+    def _in_bounds(self, row: int, col: int) -> bool:
+        return 0 <= row < len(self.grid) and 0 <= col < len(self.grid[0])
+
     def place_wall(self, row: int, col: int) -> bool:
+        if not self._in_bounds(row, col):
+            print(f"Out of bounds. Grid is {len(self.grid)}x{len(self.grid[0])}.")
+            return False
         if self.walls_remaining == 0:
             print("No walls left to place.")
             return False
-        current_tile = self.grid[row][col]
-        if current_tile.tile_type != TileType.GRASS:
+        if self.grid[row][col].tile_type != TileType.GRASS:
             print("Cannot place a wall there.")
             return False
-
-        new_tile = Tile(TileType.WALL)
-        self.grid[row][col] = new_tile
+        self.grid[row][col] = Tile(TileType.WALL)
         self.walls_remaining -= 1
         return True
 
     def unplace_wall(self, row: int, col: int) -> bool:
-        current_tile = self.grid[row][col]
-        if current_tile.tile_type != TileType.WALL:
+        if not self._in_bounds(row, col):
+            print(f"Out of bounds. Grid is {len(self.grid)}x{len(self.grid[0])}.")
+            return False
+        if self.grid[row][col].tile_type != TileType.WALL:
             print("No placed wall there.")
             return False
-
-        new_tile = Tile(TileType.GRASS)
-        self.grid[row][col] = new_tile
+        self.grid[row][col] = Tile(TileType.GRASS)
         self.walls_remaining += 1
         return True
 
@@ -43,7 +46,6 @@ class Game:
 
     def render(self):
         render_grid(self.grid, [], None)
-
         finder = EscapePathFinder(self.grid)
         finder_result = finder.find()
         if finder_result.can_escape:
@@ -52,7 +54,6 @@ class Game:
         else:
             print(f"Currently enclosed points: {finder_result.enclosed_points}")
             render_grid(self.grid, finder_result.enclosed_tiles, BackgroundColor.YELLOW)
-
         print(f"Walls remaining: {self.walls_remaining}")
 
     def handle_input(self):
@@ -62,12 +63,23 @@ class Game:
             if cmd == "quit":
                 done = True
                 self.running = False
-            elif cmd.startswith("place"):
-                _, row, col = cmd.split()
-                done = self.place_wall(int(row), ord(col) - ord('a'))
-            elif cmd.startswith("unplace"):
-                _, row, col = cmd.split()
-                done = self.unplace_wall(int(row), ord(col) - ord('a'))
+            elif cmd.startswith("place") or cmd.startswith("unplace"):
+                parts = cmd.split()
+                if len(parts) != 3:
+                    print("Usage: place <row> <col> / unplace <row> <col>")
+                    continue
+                try:
+                    row = int(parts[1])
+                    if len(parts[2]) != 1 or not parts[2].isalpha():
+                        raise ValueError
+                    col = ord(parts[2]) - ord('a')
+                except ValueError:
+                    print("Row must be a number, col must be a single letter.")
+                    continue
+                if parts[0] == "place":
+                    done = self.place_wall(row, col)
+                else:
+                    done = self.unplace_wall(row, col)
             else:
                 print("Unknown command. Try: place 0 b / unplace 0 b / quit")
         print()
