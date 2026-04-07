@@ -1,1 +1,1 @@
-imitating [enclose.horse](enclose.horse) and implemented here as an exercise
+imitating [enclose.horse](https://enclose.horse) and implemented here as an exercise
