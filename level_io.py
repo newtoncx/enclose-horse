@@ -3,6 +3,10 @@ from dataclasses import dataclass
 from tile import Tile, TileType
 from typing import List
 
+# Utility file for converting levels between two grid representations:
+#   (a) Python dataclass with 2D-list of Tile objects
+#   (b) JSON string array where each string represents an ASCII encoded grid row
+
 TILE_TO_CHAR = {
     TileType.HORSE: "H",
     TileType.GRASS: ".",

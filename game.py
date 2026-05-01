@@ -4,6 +4,9 @@ from render import BackgroundColor, render_grid
 from tile import Tile, TileType
 
 
+# The main game class runs in a loop, repeatedly rendering the current state of the grid and
+# prompting the player to place or unplace walls. If the horse can escape, it will show the escape
+# path. Otherwise, it will display the enclosed area and show the number of points enclosed.
 class Game:
     def __init__(self, level: Level):
         self.running = False

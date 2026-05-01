@@ -12,6 +12,10 @@ class EscapePathFinderResult:
     enclosed_points: Optional[int]
  
  
+# Performs a BFS starting from the horse location and keeps track of the shortest path to each
+# space using a predecessor map. If the search reaches an edge tile, then the horse can escape, so
+# we return can_escape == True with an escape path. Otherwise, we return can_escape == False and
+# the list of enclosed tiles, along with the total number of enclosed points.
 class EscapePathFinder:
     def __init__(self, grid: List[List[Tile]]):
         self.grid = grid

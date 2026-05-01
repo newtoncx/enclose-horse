@@ -10,6 +10,8 @@ PLACEABLE_TYPES = {
 }
 
 
+# The level creator initally prompts for grid dimensions, then runs in a loop to allow the user to
+# fill in the blank grid in order to create a level from scratch. It then saves the level to file.
 class LevelCreator:
     def __init__(self):
         self.grid = None
