@@ -15,7 +15,7 @@ class LevelCreator:
         self.grid = None
         self.walls = None
 
-    def _prompt_int(self, prompt: str, min_val: int = 1) -> int:
+    def prompt_int(self, prompt: str, min_val: int = 1) -> int:
         while True:
             try:
                 val = int(input(prompt))
@@ -27,19 +27,19 @@ class LevelCreator:
                 print("Please enter a whole number.")
 
     def setup(self):
-        rows = self._prompt_int("Grid rows: ")
-        cols = self._prompt_int("Grid cols: ")
-        self.walls = self._prompt_int("Number of walls: ", min_val=0)
+        rows = self.prompt_int("Grid rows: ")
+        cols = self.prompt_int("Grid cols: ")
+        self.walls = self.prompt_int("Number of walls: ", min_val=0)
         self.grid = [
             [Tile(TileType.GRASS) for _ in range(cols)]
             for _ in range(rows)
         ]
 
-    def _in_bounds(self, row: int, col: int) -> bool:
+    def in_bounds(self, row: int, col: int) -> bool:
         return 0 <= row < len(self.grid) and 0 <= col < len(self.grid[0])
 
     def place(self, row: int, col: int, tile_type: TileType) -> bool:
-        if not self._in_bounds(row, col):
+        if not self.in_bounds(row, col):
             print(f"Out of bounds. Grid is {len(self.grid)}x{len(self.grid[0])}.")
             return False
         self.grid[row][col] = Tile(tile_type)

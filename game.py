@@ -10,11 +10,11 @@ class Game:
         self.grid = [row[:] for row in level.grid]
         self.walls_remaining = level.walls
 
-    def _in_bounds(self, row: int, col: int) -> bool:
+    def in_bounds(self, row: int, col: int) -> bool:
         return 0 <= row < len(self.grid) and 0 <= col < len(self.grid[0])
 
     def place_wall(self, row: int, col: int) -> bool:
-        if not self._in_bounds(row, col):
+        if not self.in_bounds(row, col):
             print(f"Out of bounds. Grid is {len(self.grid)}x{len(self.grid[0])}.")
             return False
         if self.walls_remaining == 0:
@@ -28,7 +28,7 @@ class Game:
         return True
 
     def unplace_wall(self, row: int, col: int) -> bool:
-        if not self._in_bounds(row, col):
+        if not self.in_bounds(row, col):
             print(f"Out of bounds. Grid is {len(self.grid)}x{len(self.grid[0])}.")
             return False
         if self.grid[row][col].tile_type != TileType.WALL:
